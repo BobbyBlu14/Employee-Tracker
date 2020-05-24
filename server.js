@@ -12,20 +12,20 @@ var connection = mysql.createConnection({
 
   // Your password
   password: "root",
-  database: "top_songsDB"
+  database: "employee_tracker_db"
 });
 
 connection.connect(function(err) {
   if (err) throw err;
-  runSearch();
+firstAction();
 });
 
-function runSearch() {
+function firstAction() {
   inquirer
     .prompt({
       name: "action",
       type: "list",
-      message: "What would you like to do with your employe database?",
+      message: "What would you like to do with your employee database?",
       choices: [
         "Add/create",
         "View",
@@ -33,9 +33,10 @@ function runSearch() {
         "exit"
       ]
     })
+    
     .then(function(answer) {
       switch (answer.action) {
-      case "Add":
+      case "Add/create":
         addItem();
         break;
 
@@ -44,23 +45,33 @@ function runSearch() {
         break;
 
       case "Update":
-        updateItegitam();
+        updateItem();
+        break;
+
+        case "Delete":
+        deleteItem();
         break;
 
       case "exit":
-        connection.end();
+        // connection.end();
         break;
       }
     });
-}
+};
 
-function artistSearch() {
+function addItem() {
   inquirer
     .prompt({
-      name: "artist",
-      type: "input",
-      message: "What artist would you like to search for?"
-    })
+      name: "addWhat",
+      type: "list",
+      message: "What would you like to add ?",
+      choices: [
+        "Deptartment",
+        "Role",
+        "Emplyee",
+        "exit"
+    ]
+})
     .then(function(answer) {
       var query = "SELECT position, song, year FROM top5000 WHERE ?";
       connection.query(query, { artist: answer.artist }, function(err, res) {
@@ -71,7 +82,7 @@ function artistSearch() {
         runSearch();
       });
     });
-}
+};
 
 function multiSearch() {
   var query = "SELECT artist FROM top5000 GROUP BY artist HAVING count(*) > 1";
